@@ -949,11 +949,19 @@ function route() {
 
 function navTo(path) {
   const target = '#' + path;
-  if (location.hash === target) route();
-  else location.hash = target;
+  // Update the URL without relying on the hashchange event (some embedded
+  // preview iframes suppress it), then route directly so clicks respond
+  // instantly everywhere.
+  if (location.hash !== target) {
+    try { history.pushState(null, '', target); }
+    catch (e) { location.hash = target; }
+  }
+  route();
 }
 
+// Still handle real back/forward and direct hash edits.
 window.addEventListener('hashchange', route);
+window.addEventListener('popstate', route);
 
 document.getElementById('theme-btn').addEventListener('click', () => {
   document.documentElement.dataset.theme =
