@@ -551,6 +551,114 @@
     .list-author { font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .list-year { font-size:13px; color:var(--muted); flex-shrink:0; font-variant-numeric:tabular-nums; }
 
+    /* ── Book detail page ── */
+    #book-detail {
+      display:none;
+      width:100%;
+      max-width:1180px;
+      margin:0 auto;
+      padding:clamp(8px,2vh,28px) clamp(20px,5vw,56px) clamp(80px,12vh,140px);
+      position:relative;
+      z-index:1;
+    }
+    #book-detail.active { display:block; }
+    .detail-hero {
+      display:grid;
+      grid-template-columns:minmax(200px,300px) 1fr;
+      align-items:end;
+      gap:clamp(28px,5vw,72px);
+    }
+    .detail-cover {
+      aspect-ratio:1368/2000;
+      width:100%;
+      border-radius:2px 8px 8px 2px;
+      position:relative;
+      overflow:hidden;
+      box-shadow:rgba(40,36,18,.2) 0 2px 4px,rgba(40,36,18,.28) 0 24px 48px;
+      animation:rise .7s var(--ease-out-expo) both;
+    }
+    .detail-cover::after {
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      border-radius:inherit;
+      background:
+        linear-gradient(90deg,rgba(0,0,0,.22) 0,rgba(0,0,0,.22) 7px,transparent 7px),
+        linear-gradient(105deg,rgba(255,255,255,.12) 0%,transparent 30%,rgba(0,0,0,.12) 100%);
+    }
+    .detail-cover-overlay {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:38px 18px 18px;
+      background:linear-gradient(transparent 0%,rgba(0,0,0,.34) 52%,rgba(0,0,0,.74) 100%);
+    }
+    .detail-cover-title {
+      font-family:'Syne',system-ui,sans-serif;
+      font-weight:700;
+      font-size:clamp(1.1rem,3.4vw,1.6rem);
+      line-height:1.08;
+      letter-spacing:-.01em;
+      color:rgba(255,255,255,.96);
+      text-shadow:rgba(0,0,0,.4) 0 1px 3px;
+      text-wrap:balance;
+    }
+    .detail-cover-author { color:rgba(255,255,255,.82); font-size:12px; margin-top:4px; }
+    .detail-meta > * { animation:rise .7s var(--ease-out-expo) backwards; }
+    .detail-meta > :nth-child(1) { animation-delay:80ms; }
+    .detail-meta > :nth-child(2) { animation-delay:.14s; }
+    .detail-meta > :nth-child(3) { animation-delay:.20s; }
+    .detail-meta > :nth-child(4) { animation-delay:.26s; }
+    .detail-meta > :nth-child(5) { animation-delay:.32s; }
+    .detail-series {
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:16px;
+    }
+    .detail-title {
+      font-family:'Syne',system-ui,sans-serif;
+      letter-spacing:-.02em;
+      color:var(--fg);
+      text-wrap:balance;
+      font-size:clamp(2.25rem,4.6vw,4rem);
+      font-weight:700;
+      line-height:1;
+    }
+    .detail-author { color:var(--fg); margin-top:16px; font-size:18px; }
+    .detail-details { letter-spacing:.04em; color:var(--muted); margin-top:6px; font-size:13px; }
+    .detail-blurb {
+      max-width:48ch;
+      color:var(--muted);
+      text-wrap:pretty;
+      margin-top:22px;
+      font-size:16px;
+      line-height:1.68;
+    }
+    .detail-actions { display:flex; flex-wrap:wrap; align-items:center; gap:18px; margin-top:30px; }
+    .detail-download {
+      height:50px;
+      font-family:'Syne',system-ui,sans-serif;
+      letter-spacing:.01em;
+      font-size:14px; font-weight:700;
+      color:var(--cta-fg);
+      background:var(--cta-bg);
+      border:1px solid var(--cta-border);
+      border-radius:5px;
+      padding:0 26px;
+      display:inline-flex; align-items:center; gap:9px;
+      transition:transform .16s var(--ease-out-expo),box-shadow .16s;
+      box-shadow:rgba(255,255,255,.14) 0 1px inset,rgba(0,0,0,.5) 0 -1px inset,rgba(40,36,18,.2) 0 1px 1px,rgba(40,36,18,.24) 0 6px 14px;
+    }
+    .detail-download:hover { transform:translateY(-2px); box-shadow:rgba(255,255,255,.18) 0 1px inset,rgba(0,0,0,.5) 0 -1px inset,rgba(40,36,18,.28) 0 12px 24px; }
+    .detail-download:active { transform:translateY(1px); box-shadow:rgba(0,0,0,.55) 0 2px 7px inset,rgba(40,36,18,.2) 0 1px 2px; }
+    .detail-altlink { color:var(--muted); text-decoration:underline; text-underline-offset:2px; font-size:14px; }
+    .detail-altlink:hover { color:var(--fg); }
+    @media (max-width:680px) {
+      .detail-hero { grid-template-columns:1fr; gap:28px; }
+      .detail-cover { max-width:240px; }
+    }
+
     /* ── Keyframes ── */
     @keyframes fadeIn { from{opacity:0} to{opacity:1} }
     @keyframes heroRise { from{opacity:0;transform:translateY(26px)} to{opacity:1;transform:translateY(0)} }
@@ -634,18 +742,57 @@
     <div class="list-view" id="list-view"></div>
   </div>
 
+  <!-- Book detail -->
+  <div id="book-detail">
+    <button class="back-btn" onclick="showCollection()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to collection
+    </button>
+    <div class="detail-hero">
+      <div class="detail-cover" id="dt-cover">
+        <div class="detail-cover-overlay">
+          <div class="detail-cover-title" id="dt-cover-title"></div>
+          <div class="detail-cover-author" id="dt-cover-author"></div>
+        </div>
+      </div>
+      <div class="detail-meta">
+        <div class="detail-series" id="dt-series"></div>
+        <h1 class="detail-title" id="dt-title"></h1>
+        <div class="detail-author" id="dt-author"></div>
+        <div class="detail-details" id="dt-details"></div>
+        <p class="detail-blurb" id="dt-blurb"></p>
+        <div class="detail-actions">
+          <a class="detail-download" id="dt-download" href="#">
+            Read
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a class="detail-altlink" id="dt-altlink" href="#">Find other editions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <script>
 const BOOKS = [
-  {title:"Snow Crash",                author:"Neal Stephenson",  year:1992, section:"Fiction",            color:"#3d5a80", h:380, t:28},
-  {title:"True Names",                author:"Vernor Vinge",     year:1981, section:"Fiction",            color:"#2d6a4f", h:300, t:20},
-  {title:"Ready Player One",          author:"Ernest Cline",     year:2011, section:"Fiction",            color:"#7b2d8b", h:360, t:26},
-  {title:"A Fire Upon the Deep",      author:"Vernor Vinge",     year:1992, section:"Fiction",            color:"#1a535c", h:420, t:36},
-  {title:"Daemon",                    author:"Daniel Suarez",    year:2006, section:"Fiction",            color:"#5c4033", h:340, t:24},
-  {title:"Cryptonomicon",             author:"Neal Stephenson",  year:1999, section:"Fiction",            color:"#374785", h:440, t:38},
-  {title:"Finite and Infinite Games", author:"James Carse",      year:1986, section:"Crypto Spirituality", color:"#6b3fa0", h:300, t:18},
-  {title:"Tao Te Ching",              author:"Lao Tzu",          year:"c. 400 BC", section:"Crypto Spirituality", color:"#2d5016", h:280, t:18},
-  {title:"The Infinite Machine",      author:"Camila Russo",     year:2020, section:"Computing History",   color:"#b5451b", h:400, t:32},
+  {title:"Snow Crash",                author:"Neal Stephenson",  year:1992, section:"Fiction",            color:"#3d5a80", h:380, t:28,
+   blurb:"A hacker-swordsman delivers pizza for the Mafia and freelances in the Metaverse, where a new drug-and-virus called Snow Crash threatens both the digital and physical worlds. The novel that coined 'Metaverse' and 'avatar' as we use them today."},
+  {title:"True Names",                author:"Vernor Vinge",     year:1981, section:"Fiction",            color:"#2d6a4f", h:300, t:20,
+   blurb:"A foundational cyberpunk novella about hackers who guard their real identities ('true names') while operating in a shared virtual world called the Other Plane. An early and prescient vision of cyberspace, anonymity, and online power."},
+  {title:"Ready Player One",          author:"Ernest Cline",     year:2011, section:"Fiction",            color:"#7b2d8b", h:360, t:26,
+   blurb:"In a near-future ravaged by crisis, people escape into the OASIS, a sprawling virtual reality. When its creator dies, a contest for control of the world's most valuable system sends players hunting through layers of 1980s pop culture."},
+  {title:"A Fire Upon the Deep",      author:"Vernor Vinge",     year:1992, section:"Fiction",            color:"#1a535c", h:420, t:36,
+   blurb:"A galaxy divided into 'Zones of Thought' where the laws of intelligence and computation change with location. A reawakened superintelligence threatens everything, and a desperate rescue mission carries the only countermeasure."},
+  {title:"Daemon",                    author:"Daniel Suarez",    year:2006, section:"Fiction",            color:"#5c4033", h:340, t:24,
+   blurb:"When a legendary game designer dies, a distributed program he left behind begins recruiting humans, moving money, and reshaping society according to its own logic. A technothriller about autonomous code that feels increasingly plausible."},
+  {title:"Cryptonomicon",             author:"Neal Stephenson",  year:1999, section:"Fiction",            color:"#374785", h:440, t:38,
+   blurb:"Two timelines, WWII codebreakers and present-day technologists, converge around cryptography, gold, and the dream of a data haven. A sprawling meditation on secrets, money, and the power of mathematics."},
+  {title:"Finite and Infinite Games", author:"James Carse",      year:1986, section:"Crypto Spirituality", color:"#6b3fa0", h:300, t:18,
+   blurb:"A short, dense philosophy of two kinds of games: finite games played to win, and infinite games played to keep playing. A favorite lens among builders for thinking about systems, incentives, and open-ended cooperation."},
+  {title:"Tao Te Ching",              author:"Lao Tzu",          year:"c. 400 BC", section:"Crypto Spirituality", color:"#2d5016", h:280, t:18,
+   blurb:"The classic of the Way: brief verses on simplicity, non-coercion, and working with the grain of nature rather than against it. A perennial source for thinking about minimal, resilient systems."},
+  {title:"The Infinite Machine",      author:"Camila Russo",     year:2020, section:"Computing History",   color:"#b5451b", h:400, t:32,
+   blurb:"The definitive narrative history of Ethereum, from Vitalik Buterin's first whitepaper through the network's chaotic early years, the DAO hack, and its rise. Reported journalism on how a world computer got built."},
 ];
 
 // Build 3D shelf
@@ -671,7 +818,7 @@ function buildShelf() {
       caption.classList.add('show');
     });
     div.addEventListener('mouseleave', () => caption.classList.remove('show'));
-    div.addEventListener('click', showCollection);
+    div.addEventListener('click', () => navTo('book/' + slugify(b.title)));
     track.appendChild(div);
   });
 }
@@ -685,7 +832,7 @@ function renderBooks(q = '') {
   document.getElementById('count').textContent = `${filtered.length} title${filtered.length !== 1 ? 's' : ''}`;
 
   document.getElementById('grid-view').innerHTML = filtered.map((b, i) => `
-    <div class="book-card" style="animation-delay:${i*25}ms">
+    <div class="book-card" style="animation-delay:${i*25}ms" onclick="navTo('book/${slugify(b.title)}')">
       <div class="cover-wrap">
         <div class="cover-bg" style="background:${b.color}"></div>
         <div class="cover-overlay">
@@ -701,7 +848,7 @@ function renderBooks(q = '') {
   `).join('');
 
   document.getElementById('list-view').innerHTML = filtered.map((b, i) => `
-    <div class="list-row" style="animation-delay:${i*15}ms">
+    <div class="list-row" style="animation-delay:${i*15}ms" onclick="navTo('book/${slugify(b.title)}')">
       <div class="list-thumb">
         <div class="list-thumb-bg" style="background:${b.color}">
           <span class="list-mono">${b.title[0]}</span>
@@ -727,16 +874,64 @@ function setView(v) {
   document.getElementById('list-view').classList.toggle('active', v==='list');
 }
 
-function showHome() {
-  document.getElementById('home').classList.remove('hidden');
-  document.getElementById('collection').classList.remove('active');
+function slugify(s) {
+  return s.toLowerCase()
+    .replace(/'/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
-function showCollection() {
-  document.getElementById('home').classList.add('hidden');
-  document.getElementById('collection').classList.add('active');
-  renderBooks();
-  window.scrollTo({top:0,behavior:'smooth'});
+
+// Set which screen is visible
+function setScreen(name) {
+  document.getElementById('home').classList.toggle('hidden', name !== 'home');
+  document.getElementById('collection').classList.toggle('active', name === 'collection');
+  document.getElementById('book-detail').classList.toggle('active', name === 'book');
 }
+
+function showHome() { navTo(''); }
+function showCollection() { navTo('collection'); }
+
+function renderBook(book) {
+  const yearTxt = String(book.year).replace('-', '') ;
+  document.getElementById('dt-cover').style.background = book.color;
+  document.getElementById('dt-cover-title').textContent = book.title;
+  document.getElementById('dt-cover-author').textContent = book.author;
+  document.getElementById('dt-series').textContent = book.section;
+  document.getElementById('dt-title').textContent = book.title;
+  document.getElementById('dt-author').textContent = book.author;
+  document.getElementById('dt-details').textContent = book.year;
+  document.getElementById('dt-blurb').textContent = book.blurb || '';
+}
+
+// Hash router: '', 'collection', 'book/<slug>'
+function route() {
+  const hash = location.hash.replace(/^#\/?/, '');
+  if (hash.startsWith('book/')) {
+    const slug = hash.slice(5);
+    const book = BOOKS.find(b => slugify(b.title) === slug);
+    if (book) {
+      renderBook(book);
+      setScreen('book');
+      window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+  }
+  if (hash === 'collection') {
+    renderBooks();
+    setScreen('collection');
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  setScreen('home');
+}
+
+function navTo(path) {
+  const target = '#' + path;
+  if (location.hash === target) route();
+  else location.hash = target;
+}
+
+window.addEventListener('hashchange', route);
 
 document.getElementById('theme-btn').addEventListener('click', () => {
   document.documentElement.dataset.theme =
@@ -744,6 +939,7 @@ document.getElementById('theme-btn').addEventListener('click', () => {
 });
 
 buildShelf();
+route();
 </script>
 </body>
 </html>
