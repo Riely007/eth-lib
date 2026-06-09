@@ -811,21 +811,21 @@ const BOOKS = [
    blurb:"Two timelines, WWII codebreakers and present-day technologists, converge around cryptography, gold, and the dream of a data haven. A sprawling meditation on secrets, money, and the power of mathematics."},
   {title:"Finite and Infinite Games", author:"James Carse",      year:1986, section:"Crypto Spirituality", color:"#6b3fa0", h:300, t:18,
    blurb:"A short, dense philosophy of two kinds of games: finite games played to win, and infinite games played to keep playing. A favorite lens among builders for thinking about systems, incentives, and open-ended cooperation."},
-  {title:"Tao Te Ching",              author:"Lao Tzu",          year:"c. 400 BC", section:"Crypto Spirituality", color:"#2d5016", h:280, t:18,
+  {title:"Tao Te Ching",              author:"Lao Tzu",          year:"c. 400 BC", section:"Crypto Spirituality", color:"#2d5016", h:280, t:18, url:"https://www.gutenberg.org/ebooks/216",
    blurb:"The classic of the Way: brief verses on simplicity, non-coercion, and working with the grain of nature rather than against it. A perennial source for thinking about minimal, resilient systems."},
   {title:"The Infinite Machine",      author:"Camila Russo",     year:2020, section:"Computing History",   color:"#b5451b", h:400, t:32,
    blurb:"The definitive narrative history of Ethereum, from Vitalik Buterin's first whitepaper through the network's chaotic early years, the DAO hack, and its rise. Reported journalism on how a world computer got built."},
-  {title:"A Cypherpunk's Manifesto",  author:"Eric Hughes",      year:1993, section:"Cypherpunk",          color:"#4a4036", h:300, t:18,
+  {title:"A Cypherpunk's Manifesto",  author:"Eric Hughes",      year:1993, section:"Cypherpunk",          color:"#4a4036", h:300, t:18, url:"https://www.activism.net/cypherpunk/manifesto.html",
    blurb:"The founding statement of the cypherpunk movement: privacy is not secrecy but the power to selectively reveal oneself, and in the electronic age it must be defended with cryptography and code, not begged from governments."},
   {title:"The Beauty of eCash",       author:"Hal Finney",       year:1994, section:"Cypherpunk",          color:"#1b3a4b", h:320, t:20,
    blurb:"Hal Finney on digital cash as a collector's object: a note to the cypherpunks list on how the unforgeable numbers of an anonymous banknote might be made beautiful: rarity, fingerprints, and fractals tied to the validity of the cash itself."},
-  {title:"The Idea of Smart Contracts",author:"Nick Szabo",       year:1997, section:"Computing History",   color:"#2c3e2e", h:300, t:18,
+  {title:"The Idea of Smart Contracts",author:"Nick Szabo",       year:1997, section:"Computing History",   color:"#2c3e2e", h:300, t:18, url:"https://nakamotoinstitute.org/library/the-idea-of-smart-contracts/",
    blurb:"Nick Szabo's early essay framing contracts as self-executing protocols embedded in software and hardware, where the terms enforce themselves. A foundational idea that helped shape how blockchains later approached programmable agreements."},
-  {title:"Meditations on Moloch",      author:"Scott Alexander",   year:2014, section:"Crypto Spirituality", color:"#3a2c4a", h:360, t:24,
+  {title:"Meditations on Moloch",      author:"Scott Alexander",   year:2014, section:"Crypto Spirituality", color:"#3a2c4a", h:360, t:24, url:"https://slatestarcodex.com/2014/07/30/meditations-on-moloch/",
    blurb:"Scott Alexander's sweeping essay on coordination failures: how competition and misaligned incentives can drive everyone toward outcomes nobody wants. A widely cited lens among crypto thinkers for reasoning about mechanism design and collective action."},
-  {title:"Smart Contracts: Building Blocks for Digital Markets", author:"Nick Szabo", year:1996, section:"Computing History", color:"#34503a", h:340, t:22,
+  {title:"Smart Contracts: Building Blocks for Digital Markets", author:"Nick Szabo", year:1996, section:"Computing History", color:"#34503a", h:340, t:22, url:"https://nakamotoinstitute.org/library/smart-contracts/",
    blurb:"Szabo's longer 1996 treatment of smart contracts, published in EXTROPY: protocols that embed contractual clauses in hardware and software to make breach expensive and enforcement automatic. An early blueprint for programmable digital markets."},
-  {title:"Ethereum Whitepaper",       author:"Vitalik Buterin",   year:2013, section:"Computing History",   color:"#3d5a80", h:400, t:30,
+  {title:"Ethereum Whitepaper",       author:"Vitalik Buterin",   year:2013, section:"Computing History",   color:"#3d5a80", h:400, t:30, url:"https://ethereum.org/en/whitepaper/",
    blurb:"Vitalik Buterin's founding proposal for Ethereum: a next-generation smart contract and decentralized application platform with a built-in Turing-complete programming language. The document that set out the vision for a world computer."},
 ];
 
@@ -926,7 +926,6 @@ function showHome() { navTo(''); }
 function showCollection() { navTo('collection'); }
 
 function renderBook(book) {
-  const yearTxt = String(book.year).replace('-', '') ;
   document.getElementById('dt-cover').style.background = book.color;
   document.getElementById('dt-cover-title').textContent = book.title;
   document.getElementById('dt-cover-author').textContent = book.author;
@@ -935,6 +934,25 @@ function renderBook(book) {
   document.getElementById('dt-author').textContent = book.author;
   document.getElementById('dt-details').textContent = book.year;
   document.getElementById('dt-blurb').textContent = book.blurb || '';
+
+  // Wire the Read button only when a legitimate free source exists.
+  const readBtn = document.getElementById('dt-download');
+  const altLink = document.getElementById('dt-altlink');
+  if (book.url) {
+    readBtn.href = book.url;
+    readBtn.target = '_blank';
+    readBtn.rel = 'noopener noreferrer';
+    readBtn.style.display = '';
+    altLink.style.display = 'none';
+  } else {
+    // No free source — hide the Read button rather than link to a broken/placeholder URL.
+    readBtn.style.display = 'none';
+    altLink.style.display = '';
+    altLink.textContent = 'Find this title at a library or bookshop';
+    altLink.href = 'https://www.worldcat.org/search?q=' + encodeURIComponent(book.title + ' ' + book.author);
+    altLink.target = '_blank';
+    altLink.rel = 'noopener noreferrer';
+  }
 }
 
 // Hash router: '', 'collection', 'book/<slug>'
