@@ -23,10 +23,6 @@ python3 -m http.server 8000 --bind 127.0.0.1
 # then visit http://localhost:8000
 ```
 
-> Note: GitHub labels this repo "100% HTML" only because the CSS and
-> JavaScript live inside `index.html`. It's a single-file site, not a
-> CSS-less one.
-
 ## Contributing — add a book
 
 Anyone is welcome to add a book to the shelf. It's a single edit to one array, no build step.
