@@ -689,54 +689,6 @@
       .detail-cover { max-width:240px; }
     }
 
-    /* ── Footer ── */
-    .site-footer {
-      position:relative;
-      z-index:1;
-      border-top:1px solid var(--line);
-      padding:clamp(20px,3vh,28px) clamp(20px,5vw,56px);
-      margin-top:clamp(40px,6vh,80px);
-    }
-    .footer-inner {
-      max-width:1180px;
-      margin:0 auto;
-      display:flex;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px 28px;
-    }
-    .footer-pgp { display:flex; align-items:center; gap:10px; min-width:0; }
-    .footer-label {
-      font-family:var(--font-display);
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      font-size:11px;
-      color:var(--muted);
-    }
-    .footer-fpr {
-      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-      font-size:12px;
-      letter-spacing:.02em;
-      color:var(--muted);
-      word-break:break-all;
-      transition:color .16s;
-    }
-    .footer-fpr:hover { color:var(--fg); }
-    .footer-contact { display:flex; gap:18px; flex-shrink:0; }
-    .footer-contact a {
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      font-size:11px;
-      font-weight:500;
-      color:var(--muted);
-      transition:color .16s;
-    }
-    .footer-contact a:hover { color:var(--fg); }
-    @media (max-width:560px) {
-      .footer-inner { flex-direction:column; align-items:flex-start; }
-    }
-
     /* ── Keyframes ── */
     @keyframes fadeIn { from{opacity:0} to{opacity:1} }
     @keyframes heroRise { from{opacity:0;transform:translateY(26px)} to{opacity:1;transform:translateY(0)} }
@@ -849,15 +801,6 @@
       </div>
     </div>
   </div>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-pgp">
-        <span class="footer-label">PGP</span>
-        <a class="footer-fpr" href="pubkey.asc" download>0000 0000 0000 0000 0000&nbsp; 0000 0000 0000 0000 0000</a>
-      </div>
-    </div>
-  </footer>
 
 </div>
 <script>
