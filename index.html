@@ -793,7 +793,7 @@
         <p class="detail-blurb" id="dt-blurb"></p>
         <div class="detail-actions">
           <a class="detail-download" id="dt-download" href="#">
-            Read
+            <span id="dt-download-label">Read</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
           <a class="detail-altlink" id="dt-altlink" href="#">Find other editions</a>
@@ -1157,6 +1157,9 @@ function renderBook(book) {
     readBtn.target = '_blank';
     readBtn.rel = 'noopener noreferrer';
     readBtn.style.display = '';
+    // Label "Watch" for video links, "Read" otherwise.
+    const isVideo = /youtube\.com|youtu\.be|vimeo\.com/.test(book.url);
+    document.getElementById('dt-download-label').textContent = isVideo ? 'Watch' : 'Read';
     altLink.style.display = 'none';
   } else {
     // No free source — hide the Read button rather than link to a broken/placeholder URL.
