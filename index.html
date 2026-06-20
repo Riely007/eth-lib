@@ -522,6 +522,31 @@
       gap:clamp(20px,3vw,36px) clamp(16px,2.4vw,28px);
     }
     .grid-view.hidden { display:none; }
+    .group-head {
+      grid-column:1 / -1;
+      font-family:var(--font-display);
+      font-weight:500;
+      font-size:13px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin:clamp(14px,3vh,28px) 0 2px;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+    }
+    .group-head:first-child { margin-top:0; }
+    .group-count {
+      font-family:var(--font-sans);
+      letter-spacing:0;
+      font-size:12px;
+      color:var(--muted);
+      opacity:.7;
+      font-variant-numeric:tabular-nums;
+    }
+    .group-head-list { margin:clamp(18px,3vh,28px) 0 0; }
     .book-card {
       display:flex;
       flex-direction:column;
@@ -618,6 +643,7 @@
       box-shadow:rgba(40,36,18,.18) 0 1px 1px;
     }
     .list-thumb-bg { position:absolute; inset:0; display:grid; place-items:center; }
+    .list-thumb-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
     .list-mono {
       font-family:var(--font-display);
       font-weight:700;
@@ -1024,6 +1050,10 @@ BOOKS.forEach(b => {
   if (COVERS[b.title]) b.cover = `https://covers.openlibrary.org/b/id/${COVERS[b.title]}-L.jpg`;
 });
 
+// Published books vs essays/papers/posts, for grouping the collection.
+const BOOK_TITLES = new Set([...Object.keys(COVERS), "How the Internet Happened"]);
+function isBook(b) { return BOOK_TITLES.has(b.title); }
+
 // Build 3D shelf
 function buildShelf() {
   const track = document.getElementById('shelf-track');
@@ -1165,14 +1195,8 @@ function buildShelf() {
 }
 
 // Render grid/list
-function renderBooks(q = '') {
-  const lq = q.toLowerCase();
-  const filtered = BOOKS.filter(b =>
-    b.title.toLowerCase().includes(lq) || b.author.toLowerCase().includes(lq)
-  );
-  document.getElementById('count').textContent = `${filtered.length} read${filtered.length !== 1 ? 's' : ''}`;
-
-  document.getElementById('grid-view').innerHTML = filtered.map((b, i) => `
+function cardHTML(b, i) {
+  return `
     <div class="book-card" style="animation-delay:${i*25}ms" onclick="navTo('book/${slugify(b.title)}')">
       <div class="cover-wrap">
         ${b.cover
@@ -1188,12 +1212,15 @@ function renderBooks(q = '') {
         <div class="card-title">${b.title}</div>
         <div class="card-author">${b.author}</div>
       </div>
-    </div>
-  `).join('');
-
-  document.getElementById('list-view').innerHTML = filtered.map((b, i) => `
+    </div>`;
+}
+function rowHTML(b, i) {
+  return `
     <div class="list-row" style="animation-delay:${i*15}ms" onclick="navTo('book/${slugify(b.title)}')">
       <div class="list-thumb">
+        ${b.cover
+          ? `<img class="list-thumb-img" src="${b.cover}" alt="" loading="lazy" onerror="this.remove()">`
+          : ''}
         <div class="list-thumb-bg" style="background:${b.color}">
           <span class="list-mono">${b.title[0]}</span>
         </div>
@@ -1203,7 +1230,32 @@ function renderBooks(q = '') {
         <div class="list-author">${b.author}</div>
       </div>
       <div class="list-year">${b.year}</div>
-    </div>
+    </div>`;
+}
+
+function renderBooks(q = '') {
+  const lq = q.toLowerCase();
+  const filtered = BOOKS.filter(b =>
+    b.title.toLowerCase().includes(lq) || b.author.toLowerCase().includes(lq)
+  );
+  document.getElementById('count').textContent = `${filtered.length} read${filtered.length !== 1 ? 's' : ''}`;
+
+  const books = filtered.filter(isBook);
+  const essays = filtered.filter(b => !isBook(b));
+  const groups = [
+    { label: 'Books', items: books },
+    { label: 'Essays & Papers', items: essays },
+  ].filter(g => g.items.length);
+
+  let gi = 0, li = 0;
+  document.getElementById('grid-view').innerHTML = groups.map(g => `
+    <h3 class="group-head">${g.label} <span class="group-count">${g.items.length}</span></h3>
+    ${g.items.map(b => cardHTML(b, gi++)).join('')}
+  `).join('');
+
+  document.getElementById('list-view').innerHTML = groups.map(g => `
+    <h3 class="group-head group-head-list">${g.label} <span class="group-count">${g.items.length}</span></h3>
+    ${g.items.map(b => rowHTML(b, li++)).join('')}
   `).join('');
 }
 
