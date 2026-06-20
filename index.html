@@ -343,9 +343,17 @@
     .book-face::after {
       content:"";
       position:absolute; inset:0;
+      z-index:2;
       background:
         linear-gradient(105deg,rgba(255,255,255,.12) 0%,transparent 26%,rgba(0,0,0,.12) 100%),
         linear-gradient(90deg,rgba(0,0,0,.24) 0,rgba(0,0,0,.24) 6px,transparent 6px);
+    }
+    .book-cover-img {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      z-index:1;
+      display:block;
     }
     .book-spine-label {
       position:absolute; inset:0;
@@ -1035,7 +1043,10 @@ function buildShelf() {
     div.style.cssText = `--bh:${h}px; --bt:${t}px; height:${h}px;`;
     div.innerHTML = `
       <div class="book-face" style="background:${b.color};">
-        <div class="book-spine-label"><span class="spine-text">${b.title}</span></div>
+        ${b.cover
+          ? `<img class="book-cover-img" src="${b.cover}" alt="" loading="lazy" onerror="this.remove();this.parentElement.querySelector('.book-spine-label').style.display='flex'">
+             <div class="book-spine-label" style="display:none"><span class="spine-text">${b.title}</span></div>`
+          : `<div class="book-spine-label"><span class="spine-text">${b.title}</span></div>`}
       </div>
       <div class="book-pages-face" style="--bt:${t}px; width:${t}px;"></div>
       <div class="book-top-face" style="--bt:${t}px; height:${t}px;"></div>
