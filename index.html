@@ -700,6 +700,7 @@
       display:block;
       background:var(--bg-tint);
     }
+    .detail-cover-img[hidden] { display:none; }
     .detail-cover-overlay {
       position:absolute; inset:0;
       z-index:2;
@@ -1304,6 +1305,7 @@ function renderBook(book) {
   } else {
     coverImg.hidden = true;
     coverImg.removeAttribute('src');
+    coverImg.alt = '';
     coverOverlay.style.display = '';
   }
   document.getElementById('dt-series').textContent = book.section;
