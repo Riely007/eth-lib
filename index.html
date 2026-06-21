@@ -3,6 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Pre-warm connections to cover host and common destinations so covers
+       load and outbound Read links open faster. -->
+  <link rel="preconnect" href="https://covers.openlibrary.org" crossorigin>
+  <link rel="dns-prefetch" href="https://covers.openlibrary.org">
+  <link rel="dns-prefetch" href="https://openlibrary.org">
+  <link rel="dns-prefetch" href="https://archive.org">
+  <link rel="dns-prefetch" href="https://nakamotoinstitute.org">
+  <link rel="dns-prefetch" href="https://vitalik.eth.limo">
+
   <title>Ethereum Library: Free Cypherpunk &amp; Ethereum Reading List</title>
   <meta name="description" content="A curated, free reading list for Ethereum, cryptography, and decentralized systems: whitepapers, cypherpunk manifestos, and classic essays. Every book links to a free or public source.">
   <meta name="keywords" content="ethereum reading list, ethereum library, cypherpunk books, crypto reading list, bitcoin whitepaper, ethereum whitepaper, decentralization books, free crypto books">
