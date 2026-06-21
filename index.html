@@ -1132,6 +1132,8 @@ function buildShelf() {
   let paused = false;
   let lastFocusDiv = null;
   let lastT = performance.now();
+  let introUntil = 0;        // shelf stays flat & still until this time
+  const INTRO_MS = 10000;    // 10s calm intro before the floating drift begins
 
   // Drag-to-scrub
   let dragging = false, dragStartX = 0, dragStartOffset = 0;
@@ -1162,8 +1164,10 @@ function buildShelf() {
     const dt = Math.min(0.05, (now - lastT) / 1000);
     lastT = now;
     if (!setWidth) measure();
+    if (introUntil === 0) introUntil = now + INTRO_MS;
+    const floating = now >= introUntil;   // calm-flat for the first 10s
 
-    if (!paused && setWidth) offset += speed * dt;
+    if (floating && !paused && setWidth) offset += speed * dt;
     if (setWidth) offset = ((offset % setWidth) + setWidth) % setWidth;
 
     track.style.transform = `translateX(${-offset}px)`;
@@ -1175,23 +1179,28 @@ function buildShelf() {
     const centerX = shelfRect.left + shelfRect.width / 2;
     const range = shelfRect.width * 0.16;   // how quickly focus falls off
 
-    // Read pass: each book's on-screen centre x (forces one layout).
-    let bestDist = Infinity, bestIdx = -1;
+    // Read pass: each book's on-screen centre x (only needed once floating).
+    let bestIdx = -1;
     const dists = new Array(books.length);
-    for (let i = 0; i < books.length; i++) {
-      const r = books[i].getBoundingClientRect();
-      const dist = Math.abs((r.left + r.width / 2) - centerX);
-      dists[i] = dist;
-      if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+    if (floating) {
+      let bestDist = Infinity;
+      for (let i = 0; i < books.length; i++) {
+        const r = books[i].getBoundingClientRect();
+        const dist = Math.abs((r.left + r.width / 2) - centerX);
+        dists[i] = dist;
+        if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+      }
     }
 
-    // Write pass: apply focus styles.
+    // Write pass: during the intro the shelf stays flat (only a hovered book
+    // pops); once floating, the centred book rises.
     for (let i = 0; i < books.length; i++) {
       const div = books[i];
-      let foc = Math.max(0, 1 - dists[i] / range);
-      if (div === hoveredBook) foc = 1;
+      let target = (div === hoveredBook) ? 1
+                 : floating ? Math.max(0, 1 - dists[i] / range)
+                 : 0;
       const prev = parseFloat(div.dataset.foc || '0');
-      foc = prev + (foc - prev) * Math.min(1, dt * 12);
+      const foc = prev + (target - prev) * Math.min(1, dt * 12);
       div.dataset.foc = foc;
       div.style.setProperty('--foc', foc.toFixed(3));
       div.style.setProperty('--lift', (-34 * foc).toFixed(1) + 'px');
@@ -1200,13 +1209,16 @@ function buildShelf() {
       div.style.zIndex = String(Math.round(foc * 100));
     }
 
-    // Caption follows the hovered book if any, else the centred one.
-    const focusDiv = hoveredBook || (bestIdx !== -1 ? books[bestIdx] : null);
+    // Caption: hovered book first; else the centred book once floating.
+    const focusDiv = hoveredBook || (floating && bestIdx !== -1 ? books[bestIdx] : null);
     if (focusDiv && focusDiv !== lastFocusDiv) {
       lastFocusDiv = focusDiv;
       capTitle.textContent = focusDiv.dataset.title;
       capAuthor.textContent = focusDiv.dataset.author;
       caption.classList.add('show');
+    } else if (!focusDiv && lastFocusDiv) {
+      lastFocusDiv = null;
+      caption.classList.remove('show');
     }
 
     requestAnimationFrame(frame);
