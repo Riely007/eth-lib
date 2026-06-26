@@ -912,6 +912,12 @@ const BOOKS = [
    blurb:"A galaxy divided into 'Zones of Thought' where the laws of intelligence and computation change with location. A reawakened superintelligence threatens everything, and a desperate rescue mission carries the only countermeasure."},
   {title:"Daemon",                    author:"Daniel Suarez",    year:2006, section:"Fiction",            color:"#5c4033", h:340, t:24, url:"https://openlibrary.org/works/OL13646905W",
    blurb:"When a legendary game designer dies, a distributed program he left behind begins recruiting humans, moving money, and reshaping society according to its own logic. A technothriller about autonomous code that feels increasingly plausible."},
+  {title:"The Three-Body Problem",    author:"Cixin Liu",        year:2008, section:"Fiction",            color:"#1f2733", h:400, t:30, url:"https://openlibrary.org/isbn/9780765377067",
+   blurb:"Liu Cixin's Hugo-winning first contact novel, opening the Remembrance of Earth's Past trilogy. From China's Cultural Revolution to a doomed alien civilization, it sets up the grand cosmic-sociology ideas the series is famous for."},
+  {title:"The Dark Forest",           author:"Cixin Liu",        year:2008, section:"Fiction",            color:"#10402c", h:420, t:34, url:"https://openlibrary.org/works/OL16314245W",
+   blurb:"The second Three-Body novel and source of the 'dark forest' theory: the universe is a silent forest where every civilization is a hunter, and revealing your position invites destruction. The metaphor crypto and security thinkers love to cite."},
+  {title:"Death's End",               author:"Cixin Liu",        year:2010, section:"Fiction",            color:"#2a1f5e", h:430, t:36, url:"https://openlibrary.org/works/OL17610507W",
+   blurb:"The sweeping finale of the trilogy, following humanity across vast stretches of time and space as it confronts the consequences of the dark forest. A vision of deterrence, decay, and the deep future."},
   {title:"Cryptonomicon",             author:"Neal Stephenson",  year:1999, section:"Fiction",            color:"#374785", h:440, t:38, url:"https://openlibrary.org/works/OL38494W",
    blurb:"Two timelines, WWII codebreakers and present-day technologists, converge around cryptography, gold, and the dream of a data haven. A sprawling meditation on secrets, money, and the power of mathematics."},
   {title:"Finite and Infinite Games", author:"James Carse",      year:1986, section:"Crypto Spirituality", color:"#6b3fa0", h:300, t:18, url:"https://archive.org/details/finiteinfinitega0000cars",
@@ -1056,6 +1062,8 @@ const COVERS = {
   "Masters of Doom": 606299,
   "The Internet Is My Religion": 13327306,
   "The Cathedral and the Bazaar": 805932,
+  "The Dark Forest": 10526598,
+  "Death's End": 7893958,
 };
 BOOKS.forEach(b => {
   if (COVERS[b.title]) b.cover = `https://covers.openlibrary.org/b/id/${COVERS[b.title]}-L.jpg`;
@@ -1064,6 +1072,7 @@ BOOKS.forEach(b => {
 // Self-hosted covers for books OpenLibrary doesn't have.
 const LOCAL_COVERS = {
   "How the Internet Happened": "covers/how-the-internet-happened.jpg",
+  "The Three-Body Problem": "https://covers.openlibrary.org/b/isbn/9780765377067-L.jpg",
 };
 BOOKS.forEach(b => { if (LOCAL_COVERS[b.title]) b.cover = LOCAL_COVERS[b.title]; });
 
