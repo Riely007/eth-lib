@@ -1077,7 +1077,7 @@ const LOCAL_COVERS = {
 BOOKS.forEach(b => { if (LOCAL_COVERS[b.title]) b.cover = LOCAL_COVERS[b.title]; });
 
 // Published books vs essays/papers/posts, for grouping the collection.
-const BOOK_TITLES = new Set([...Object.keys(COVERS), "How the Internet Happened"]);
+const BOOK_TITLES = new Set([...Object.keys(COVERS), ...Object.keys(LOCAL_COVERS)]);
 function isBook(b) { return BOOK_TITLES.has(b.title); }
 
 // Build 3D shelf
